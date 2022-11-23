@@ -6,6 +6,7 @@
 // - describe what you did to take this project "above and beyond"
 
 let groundImg;
+<<<<<<< HEAD
 let groundBlocks =[];
 
 class Ground {
@@ -58,6 +59,11 @@ function preload() {
   lWalk =  loadImage("mario-l-walk.png");
   lJump =  loadImage("mario-l-jump.png");
   lHit =  loadImage("mario-l-hit.png");
+=======
+
+function preload() {
+  groundImg = loadImage("ground.png");
+>>>>>>> 523603f2746384c9e27e0b8b796c888d846eea57
 }
 
 function setup() {
@@ -68,6 +74,7 @@ function setup() {
 }
 
 function draw() {
+<<<<<<< HEAD
   background(color(0, 125, 250));
   for (let i = 0; i < groundBlocks.length; i++) {
     groundBlocks[i].display();
@@ -108,10 +115,20 @@ function handleKeys() {
 function keyPressed() {
   if (keyCode === UP_ARROW) {
    marioJumps();
+=======
+  background(color(0, 150, 255));
+  displayGround();
+}
+
+function displayGround() {
+  for (let i = 0; i < width; i+=100) {
+    image(groundImg, i, height+100, 100, 100);
+>>>>>>> 523603f2746384c9e27e0b8b796c888d846eea57
   }
 }
 
 
+<<<<<<< HEAD
 function marioJumps() {
   if (mario.y >= 410) {
     while (mario.y >= 410) {
@@ -131,3 +148,5 @@ function marioJumps() {
   }
 }
   
+=======
+>>>>>>> 523603f2746384c9e27e0b8b796c888d846eea57
