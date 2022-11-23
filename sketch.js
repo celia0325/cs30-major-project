@@ -20,8 +20,11 @@ let lWalk;
 let lJump;
 let lHit;
 
-let img;
+let direction = "";
+
+let img = rStand;
 let standImg = "R";
+let mario;
 
 class Ground {
   constructor() {
@@ -33,19 +36,48 @@ class Ground {
   }
 
   display() {
-    for (let x = 0; x < this.width; x+=50) {
-      image(groundImg, x, this.y, this.size, this.size)
+    for (let x = 0; x < this.width; x+=this.size) {
+      image(groundImg, x, this.y, this.size, this.size);
     }
   }
 }
 
-let mario = {
-  jump : 0,
-  speed: 5,
-  size: 60,
-  x : 30,
-  y : 0,
+class Mario {
+  constructor() {
+    this.jump = 0;
+    this.speed = 5;
+    this.size = 60;
+    this.x = 30;
+    this.y = 0;
+    this.friction = 0.01;
+    this.gravity = 0.09;
+    this.hop = -5;
+  }
+
+  display() {
+    if (direction === "") {
+      image(rStand, this.x, this.y, this.size/1.7, this.size);
+    }
+  }
+
+  move(direction) {
+    if (direction === "right") {
+      standImg = "R";
+      mario.x += mario.speed;
+      if (standImg === "R"){
+        image(rWalk, this.x, this.y, this.size/1.7, this.size);
+      }
+    }
+    if (direction === "left") {
+      standImg = "L";
+      mario.x -= mario.speed;
+      if (standImg === "L") {
+        image(lWalk, this.x, this.y, this.size/1.7, this.size); 
+      }
+    }
+  }
 }
+
 
 function preload() {
   groundImg = loadImage("ground.png");
@@ -62,11 +94,11 @@ function preload() {
 }
 
 function setup() {
+  mario = new Mario();
   createCanvas(windowWidth, windowHeight);
   mario.jump = height - 50 - mario.size;
   mario.y = height - 50 - mario.size;
-  img = rStand;
-  let block = new Ground
+  let block = new Ground;
   groundBlocks.push(block);
 }
 
@@ -75,17 +107,13 @@ function draw() {
   for (let i = 0; i < groundBlocks.length; i++) {
     groundBlocks[i].display();
   }
-  image(img, mario.x, mario.y, mario.size/1.7, mario.size)
+  mario.display();
   handleKeys();  
 }
 
 function handleKeys() {
   if (keyIsDown(39)) { 
-    standImg = "R";
-    mario.x += mario.speed;
-    if (standImg === "R"){
-      img = rWalk;
-    }
+    mario.move("right");
   }
   else {
     if (standImg === "R") {
@@ -94,11 +122,7 @@ function handleKeys() {
   }
 
   if (keyIsDown(37)) { 
-    standImg = "L";
-    mario.x -= mario.speed;
-    if (standImg === "L") {
-      img = lWalk; 
-    }
+    mario.move("left");
   }
   else {
     if (standImg === "L") {
@@ -109,26 +133,11 @@ function handleKeys() {
 
 function keyPressed() {
   if (keyCode === UP_ARROW) {
-   marioJumps();
+    marioJumps();
   }
 }
 
 
 function marioJumps() {
-  if (mario.y >= 410) {
-    while (mario.y >= 410) {
-      mario.y -= 1;
-    }
-    if (standImg === "R") {
-      img = rJump;
-    }
-    else if (standImg === "L") {
-      img = lJump;  
-    }
-  }
-  else if (mario.y < 460){
-    while (mario.y < 460) {
-      mario.y += 1;
-    }
-  }
+  
 }
