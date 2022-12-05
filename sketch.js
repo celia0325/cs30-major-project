@@ -10,134 +10,161 @@ let groundBlocks =[];
 
 //right mario sprite
 let rStand;
-let rWalk;
 let rJump;
-let rHit;
 
 //left mario sprites
 let lStand;
-let lWalk;
 let lJump;
-let lHit;
 
-let direction = "";
+let direction = "right";
 
 let img = rStand;
+let imgW;
 let standImg = "R";
 let mario;
 
+let numOfFrames = 3;
+let lefts = [];
+let frames = [];
+let whichFrame = 0;
+
 class Ground {
   constructor() {
-    this.width = windowWidth;
-    this.height = windowHeight;
-    this.size = 50;
-    this.x;
-    this.y = height - this.size;
+    //this.width = windowWidth;
+    //this.height = windowHeight;
+    //this.size = 50;
+    //this.y = height - this.size;
   }
 
   display() {
-    for (let x = 0; x < this.width; x+=this.size) {
-      image(groundImg, x, this.y, this.size, this.size);
+    for (let x = 0; x < width; x+=50) {
+      image(groundImg, x, 519, 50, 50);
     }
   }
 }
 
 class Mario {
   constructor() {
-    this.jump = 0;
-    this.speed = 5;
-    this.size = 60;
+    //this.size = 60;
     this.x = 30;
-    this.y = 0;
-    this.friction = 0.01;
-    this.gravity = 0.09;
-    this.hop = -5;
+    //this.y = windowHeight;
+    //this.speed = 5;
+    //this.gravity = 0
   }
 
-  display() {
-    if (direction === "") {
-      image(rStand, this.x, this.y, this.size/1.7, this.size);
+  move() {
+    if (direction === "right" || direction === "none") {
+      img = rStand
     }
+    if (direction = "left") {
+      img = lStand 
+    }
+    image(img, this.x, height-110, 60/1.7, 60)
   }
 
-  move(direction) {
-    if (direction === "right") {
-      standImg = "R";
-      mario.x += mario.speed;
-      if (standImg === "R"){
-        image(rWalk, this.x, this.y, this.size/1.7, this.size);
+  update() {
+    imageMode(CENTER);
+    if (frameCount % 7 === 0) {
+      whichFrame += 1;
+      if (direction === "right"){
+        if (width > this.x) {
+          this.x +=30;
+        }
+        else {
+          this.x = 0
+        }
       }
+      //else if (direction === "left"){
+        //if (width >= this.x) {
+          //if (this.x <= 0) {
+            //this.x = width;
+          //}
+          //this.x -=30;
+        //}
+      //}
     }
-    if (direction === "left") {
-      standImg = "L";
-      mario.x -= mario.speed;
+    if (whichFrame === frames.length) {
+      whichFrame = 0;
+      
+    }
+    image(frames[whichFrame], this.x, height-110, 60/1.7, 60);
+  }
+
+  applyForces() {
+    if (this.y > height - this.size - 50) {
+      this.y = height - this.size - 50
+      this.gravity = 0; 
+    } 
+    // bounce off top wall
+    if (this.y <= height - this.size - 50 - 100) {
+      this.gravity *= -.75;
+    }
+    
+    if (this.gravity !== 0){
+      if (standImg === "R") {
+        img = rJump
+      }
       if (standImg === "L") {
-        image(lWalk, this.x, this.y, this.size/1.7, this.size); 
+        img = lJump
       }
     }
+    this.y += this.gravity;
   }
 }
 
 
+
 function preload() {
   groundImg = loadImage("ground.png");
-  
-  rStand =  loadImage("mario-right.png");
-  rWalk =  loadImage("mario-r-walk.png");
-  rJump =  loadImage("mario-r-jump.png");
-  rHit =  loadImage("mario-r-hit.png");
 
-  lStand =  loadImage("mario-left.png");
-  lWalk =  loadImage("mario-l-walk.png");
-  lJump =  loadImage("mario-l-jump.png");
-  lHit =  loadImage("mario-l-hit.png");
+  for (let i = 0; i< numOfFrames; i++) {
+    let filename = 'walk-r/' + i + '.png';
+    let right = loadImage(filename);
+    frames.push(right);
+  }
+  
+  rStand =  loadImage("standing/rStand.png");
+  rJump = loadImage("mario-r-jump.png");
+
+  lStand =  loadImage("standing/lStand.png");
+  lJump = loadImage("mario-l-jump.png");
 }
 
 function setup() {
   mario = new Mario();
   createCanvas(windowWidth, windowHeight);
-  mario.jump = height - 50 - mario.size;
-  mario.y = height - 50 - mario.size;
+  
   let block = new Ground;
   groundBlocks.push(block);
+  //mario.y = height - groundBlocks[0].size - mario.size;
 }
 
 function draw() {
   background(color(0, 125, 250));
-  for (let i = 0; i < groundBlocks.length; i++) {
+  handleKeys();
+  for (let i = 0; i < groundBlocks.length; i++){
     groundBlocks[i].display();
   }
-  mario.display();
-  handleKeys();  
+  
+  //mario.applyForces();
+  
 }
 
 function handleKeys() {
-  if (keyIsDown(39)) { 
-    mario.move("right");
+  if (keyIsDown(38)) { 
+    mario.gravity = -1 * mario.speed* 0.8;
+    frameCount = 0;
   }
-  else {
-    if (standImg === "R") {
-      img = rStand;
-    }
-  }
-
   if (keyIsDown(37)) { 
-    mario.move("left");
+    direction = "left"
+    mario.update();
+  }
+  else if (keyIsDown(39)) { 
+    direction = "right"
+    mario.update();
   }
   else {
-    if (standImg === "L") {
-      img = lStand;
-    }
+    mario.move()
   }
 }
 
-function keyPressed() {
-  if (keyCode === UP_ARROW) {
-    marioJumps();
-  }
-}
-
-
-function marioJumps() {
-  
-}
