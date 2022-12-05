@@ -7,6 +7,8 @@ let numOfFrames = 3;
 
 let rights = [];
 let lefts = [];
+let rJump;
+let lJump;
 let whichFrame = 0;
 let frameSwitch = 5; //if the frame count is divisble by this # it will switch what sprite is shown
 
@@ -142,15 +144,6 @@ class Mario {
     if (this.y <= height - this.height - 50 - 110) {
       this.gravity *= -.75;
     }
-    
-    if (this.gravity !== 0){
-      if (img === rStand) {
-        img = rJump
-      }
-      else if (img === lStand) {
-        img = lJump
-      }
-    }
     this.y += this.gravity;
   }
 }
@@ -183,20 +176,20 @@ function handleKeys() {
     mario.move()
   }
   else {
-    if (direction === "right") {
-      img = rStand;
-    }
-    else if (direction === "left") {
-      img = lStand
-    }
-    else {
+    if (direction === "up") {
+      mario.width = 45
       if (img === rStand){
         img = rJump;
       }
-      else {
+      else if (img === lStand){
         img = lJump;
       }
-      
+    }
+    else if (direction === "right") {
+      img = rStand;
+    }
+    else if (direction === "left") {
+      img = lStand      
     }
    mario.display()
   }
@@ -213,7 +206,7 @@ class Ground {
 
     image(groundImg, this.x, this.y, 50, 50);
     //theScreen[x][this.y] === 1;
-    //console.log(theScreen[x][this.y])
+    console.log(direction)
   }
 }
 
