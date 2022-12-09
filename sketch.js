@@ -60,10 +60,7 @@ function setup() {
   // start sprite in the center of the screen
   mario = new Mario();
   img = rStand;
-
-  let block;
-  ground = new Ground(block);
-  groundBlocks.push(ground);
+  ground = new Ground();
 }
 
 
@@ -72,10 +69,10 @@ function draw() {
   displayGrid();
   handleKeys();
   mario.applyForces();
-  for (let i = 0; i < groundBlocks; i++) {
-    groundBlocks[i].display(0, 1, 30);
-  }
-  //ground.display(10, 2, 5);
+  ground.display(0, 1, 30);
+  ground.display(11, 3, 3);
+  ground.display(10, 2, 5);
+  groundBlocks.push(ground);
   onGround();
 }
 
@@ -147,7 +144,7 @@ class Mario {
       this.gravity = 0; 
     } 
     // bounce off top wall
-    if (this.y <= height - this.height - cellSize - 110) {
+    if (this.y === height - this.height - cellSize - 110) {
       this.gravity *= -0.75;
     }
     this.y += this.gravity;
@@ -204,13 +201,18 @@ function handleKeys() {
 class Ground {
   constructor() {
     this.size = cellSize;
+    
   }
 
   display(x, gRow, numOfBlocks) {
     this.x = x;
     this.y = height - this.size*gRow;
     this.numOfBlocks = numOfBlocks;
-    image(groundImg, this.x*this.size, this.y, this.size, this.size);
+    
+    for(let i = 0; i < this.numOfBlocks; i++) {
+      image(groundImg, (this.x+i)*this.size, this.y, this.size, this.size);
+      groundBlocks[ROWS-i].push(ground)
+    }
   }
 }
 
