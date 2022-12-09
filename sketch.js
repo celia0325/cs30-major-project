@@ -52,27 +52,26 @@ function setup() {
   createCanvas(windowWidth, windowHeight);
 
   cellSize = 50;
-  ROWS = height/cellSize;
-  COLS = width/cellSize;
+  ROWS = height/cellSize-0.78;
+  COLS = width/cellSize -0.9;
 
   theScreen = create2dArray();
 
   // start sprite in the center of the screen
   mario = new Mario();
   img = rStand;
-  ground = new Ground();
+  ground = new Ground(theScreen);
 }
 
 
 function draw() {
   background(0);
-  displayGrid();
+  displayGrid(theScreen);
   handleKeys();
   mario.applyForces();
-  ground.display(0, 1, 30);
-  ground.display(11, 3, 3);
+  //ground.display(0, 1, 35);
+  //ground.display(11, 3, 15);
   ground.display(10, 2, 5);
-  groundBlocks.push(ground);
   onGround();
 }
 
@@ -155,8 +154,8 @@ function create2dArray() {
   let emptyArray = [];
   for (let y = 0; y < ROWS; y ++) {
     emptyArray.push([]);
-    for (let x = COLS; x > 0; x --) {
-      emptyArray[y].push(0);
+    for (let x = 0; x < COLS; x ++) {
+      emptyArray[y].push(x);
     }
   }
   return emptyArray;
@@ -199,9 +198,9 @@ function handleKeys() {
 }
 
 class Ground {
-  constructor() {
-    this.size = cellSize;
-    
+  constructor(grid) {
+    this.grid = grid;
+    this.size = cellSize-10;
   }
 
   display(x, gRow, numOfBlocks) {
@@ -210,17 +209,22 @@ class Ground {
     this.numOfBlocks = numOfBlocks;
     
     for(let i = 0; i < this.numOfBlocks; i++) {
-      image(groundImg, (this.x+i)*this.size, this.y, this.size, this.size);
-      groundBlocks[ROWS-i].push(ground)
+      image(groundImg, (COLS-this.x)*this.size, height - this.size, this.size+10, this.size);
+      this.grid[gRow][this.x+i] = 100;
+      //10, 2, 17
     }
   }
 }
 
-function displayGrid() {
+function displayGrid(grid) {
   for (let y = ROWS; y > 0; y--) {
-    for (let x = 0; x < COLS; x++) {
-          
-      fill(color(0, 125, 250));
+    for (let x = COLS; x > 0; x--) {
+      if (grid[ROWS-y][x] !== x) {
+        fill(color("black"));
+      }
+      else {
+        fill(color(0, 125, 250));
+      }
       rect(x*cellSize, y*cellSize, cellSize, cellSize);
 
     }
