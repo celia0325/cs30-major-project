@@ -21,6 +21,7 @@ let groundImg;
 let img;
 let direction = "right";
 let facing;
+let block;
 
 let mario;
 let anotherBlock;
@@ -49,6 +50,7 @@ function preload() {
 
 
 function setup() {
+  imageMode(CENTER)
   createCanvas(windowWidth, windowHeight);
 
   cellSize = 50;
@@ -60,7 +62,7 @@ function setup() {
   // start sprite in the center of the screen
   mario = new Mario();
   img = rStand;
-  ground = new Ground(theScreen);
+  //ground = new Ground(theScreen);
 }
 
 
@@ -69,10 +71,11 @@ function draw() {
   displayGrid(theScreen);
   handleKeys();
   mario.applyForces();
-  //ground.display(0, 1, 35);
-  //ground.display(11, 3, 15);
-  ground.display(10, 2, 5);
-  onGround();
+  newBlocks(0, 1, 35);
+  newBlocks(11, 3, 5);
+  //newBlocks(0, 1, 15);
+  //ground.display(10, 4, 10);
+  //onGround();
 }
 
 class Mario {
@@ -82,7 +85,7 @@ class Mario {
     this.walkSpeed = 18;
     this.jumpSpeed = 5;
     this.x = 30;
-    this.y = height;
+    this.y = height-this.height/3;
     this.gravity = 0;
   }
 
@@ -138,8 +141,8 @@ class Mario {
   }
 
   applyForces() {
-    if (this.y > height - this.height - cellSize) {
-      this.y = height - this.height - cellSize;
+    if (this.y > height - this.height - cellSize/1.25) {
+      this.y = height - this.height - cellSize/1.25;
       this.gravity = 0; 
     } 
     // bounce off top wall
@@ -200,7 +203,7 @@ function handleKeys() {
 class Ground {
   constructor(grid) {
     this.grid = grid;
-    this.size = cellSize-10;
+    this.size = 40;
   }
 
   display(x, gRow, numOfBlocks) {
@@ -209,8 +212,8 @@ class Ground {
     this.numOfBlocks = numOfBlocks;
     
     for(let i = 0; i < this.numOfBlocks; i++) {
-      image(groundImg, (COLS-this.x)*this.size, height - this.size, this.size+10, this.size);
-      this.grid[gRow][this.x+i] = 100;
+      image(groundImg, (this.x+i)*cellSize, height - 22.5*gRow, cellSize, 45);
+      //this.grid[gRow][this.x+i] = 100;
       //10, 2, 17
     }
   }
@@ -218,9 +221,9 @@ class Ground {
 
 function displayGrid(grid) {
   for (let y = ROWS; y > 0; y--) {
-    for (let x = COLS; x > 0; x--) {
+    for (let x = 0; x < COLS; x++) {
       if (grid[ROWS-y][x] !== x) {
-        fill(color("black"));
+        //fill(color("black"));
       }
       else {
         fill(color(0, 125, 250));
@@ -229,6 +232,12 @@ function displayGrid(grid) {
 
     }
   }
+}
+
+function newBlocks(a, b, c){
+  block = new Ground();
+  block.display(a, b, c);
+  //groundBlocks.push(block);
 }
 
 function onGround() {
