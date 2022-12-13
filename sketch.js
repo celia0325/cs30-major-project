@@ -21,10 +21,14 @@ let groundImg;
 let img;
 let direction = "right";
 let facing;
-let block;
+
+let block = {
+  x : 0,
+  y : 0,
+  size : 40,
+};
 
 let mario;
-let anotherBlock;
 
 function preload() {
   groundImg = loadImage("ground.png");
@@ -50,7 +54,7 @@ function preload() {
 
 
 function setup() {
-  imageMode(CENTER)
+  imageMode(CENTER);
   createCanvas(windowWidth, windowHeight);
 
   cellSize = 50;
@@ -62,7 +66,7 @@ function setup() {
   // start sprite in the center of the screen
   mario = new Mario();
   img = rStand;
-  //ground = new Ground(theScreen);
+  makeBlock(0, 1, 15);
 }
 
 
@@ -71,11 +75,9 @@ function draw() {
   displayGrid(theScreen);
   handleKeys();
   mario.applyForces();
-  newBlocks(0, 1, 35);
-  newBlocks(11, 3, 5);
-  //newBlocks(0, 1, 15);
-  //ground.display(10, 4, 10);
-  //onGround();
+  
+  drawBlocks();
+  onGround();
 }
 
 class Mario {
@@ -85,7 +87,7 @@ class Mario {
     this.walkSpeed = 18;
     this.jumpSpeed = 5;
     this.x = 30;
-    this.y = height-this.height/3;
+    this.y = height-50;
     this.gravity = 0;
   }
 
@@ -141,12 +143,12 @@ class Mario {
   }
 
   applyForces() {
-    if (this.y > height - this.height - cellSize/1.25) {
-      this.y = height - this.height - cellSize/1.25;
+    if (this.y > height - 1.5*cellSize) {
+      this.y = height - 1.5*cellSize;
       this.gravity = 0; 
     } 
     // bounce off top wall
-    if (this.y === height - this.height - cellSize - 110) {
+    if (this.y === height - 1.5*cellSize - 110) {
       this.gravity *= -0.75;
     }
     this.y += this.gravity;
@@ -200,24 +202,24 @@ function handleKeys() {
   }
 }
 
-class Ground {
-  constructor(grid) {
-    this.grid = grid;
-    this.size = 40;
-  }
 
-  display(x, gRow, numOfBlocks) {
-    this.x = x;
-    this.y = height - this.size*gRow;
-    this.numOfBlocks = numOfBlocks;
-    
-    for(let i = 0; i < this.numOfBlocks; i++) {
-      image(groundImg, (this.x+i)*cellSize, height - 22.5*gRow, cellSize, 45);
-      //this.grid[gRow][this.x+i] = 100;
-      //10, 2, 17
-    }
+function makeBlock(x, levY, numOfBlocks) {
+  for (let o = 0; o < numOfBlocks; o++){
+    block.x = (x+o) *cellSize;
+    block.y = height - block.size*levY;
+
+    groundBlocks.push(block);
   }
 }
+
+function drawBlocks() { 
+  for(let i = 0; i < groundBlocks.length; i++) {
+    image(groundImg, block.x+ cellSize/2, height - 21.5, cellSize, 45);
+  }
+}
+
+  
+
 
 function displayGrid(grid) {
   for (let y = ROWS; y > 0; y--) {
@@ -234,16 +236,12 @@ function displayGrid(grid) {
   }
 }
 
-function newBlocks(a, b, c){
-  block = new Ground();
-  block.display(a, b, c);
-  //groundBlocks.push(block);
-}
-
 function onGround() {
-  if (ground.y < mario.y) {
-    console.log(true);
-    mario.y += ground.size;
+  for (let i = 0; i < groundBlocks.length; i++){
+    if (block.y > mario.y) {
+      //console.log(true);
+      //mario.y -= block.size;
+    }
   }
 }
 
