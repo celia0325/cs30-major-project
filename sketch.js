@@ -66,12 +66,13 @@ function setup() {
   // start sprite in the center of the screen
   mario = new Mario();
   img = rStand;
-  makeBlock(2, 1, 15);
+  makeBlock(7, 1, 7);
+ // makeBlock(2, 2, 3);
 }
 
 
 function draw() {
-  background(0);
+  background(color(0, 125, 250));
   displayGrid(theScreen);
   handleKeys();
   mario.applyForces();
@@ -205,8 +206,8 @@ function handleKeys() {
 
 function makeBlock(x, levY, numOfBlocks) {
   for (let o = 0; o < numOfBlocks; o++){
-    block.x = (x+o) *cellSize;
-    block.y = height - block.size*levY;
+    block.x = x * cellSize - cellSize/2;
+    block.y = height-levY*cellSize+35;
 
     groundBlocks.push(numOfBlocks);
   }
@@ -214,7 +215,7 @@ function makeBlock(x, levY, numOfBlocks) {
 
 function drawBlocks(numOfBlocks) { 
   for(let i = 0; i < groundBlocks.length; i++) {
-    image(groundImg, block.x+i* cellSize/2, height - 21.5, cellSize, 45);
+    image(groundImg, block.x+i* cellSize, block.y, 50, 50);
   }
 }
 
