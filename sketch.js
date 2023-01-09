@@ -14,21 +14,17 @@ let lJump;
 let whichFrame = 0;
 let frameSwitch = 5; //if the frame count is divisble by this # it will switch what sprite is shown
 
-let ground;
+let yMin;
 let groundBlocks = [];
-let cords;
+let block;
 let groundImg;
 let img;
 let direction = "right";
 let facing;
 
-let block = {
-  x : 0,
-  y : 0,
-  size : 40,
-};
-
 let mario;
+
+let grid;
 
 function preload() {
   groundImg = loadImage("ground.png");
@@ -66,8 +62,7 @@ function setup() {
   // start sprite in the center of the screen
   mario = new Mario();
   img = rStand;
-  makeBlock(7, 1, 7);
- // makeBlock(2, 2, 3);
+  createTerrain();
 }
 
 
@@ -75,10 +70,10 @@ function draw() {
   background(color(0, 125, 250));
   displayGrid(theScreen);
   handleKeys();
-  mario.applyForces();
+  
   
   drawBlocks();
-  onGround();
+  mario.applyForces();
 }
 
 class Mario {
@@ -88,21 +83,21 @@ class Mario {
     this.walkSpeed = 18;
     this.jumpSpeed = 5;
     this.x = 30;
-    this.y = height-50;
+    this.y = height-68;
     this.gravity = 0;
   }
 
-  move() {
+  move() {   
     if (frameCount % frameSwitch === 0) {
       whichFrame += 1;
       if (direction === "right"){
-        if (width > this.x) {
-          this.x +=this.walkSpeed;
-        }
-        else {
-          this.x = 0;
-        }
-        facing = rights;
+          if (width > this.x) {
+            this.x +=this.walkSpeed;
+          }
+          else {
+            this.x = 0;
+          }
+          facing = rights;
       }
       else if (direction === "left"){
         if (width > this.x) {
@@ -114,6 +109,7 @@ class Mario {
         facing = lefts;
       }
     }
+  
     
     if (whichFrame === rights.length) {
       whichFrame = 0;
@@ -135,7 +131,9 @@ class Mario {
     }
   }
 
+
   jump() {
+    this.y-=1
     image(img, this.x, this.y, this.width, this.height);
   }
 
@@ -144,15 +142,24 @@ class Mario {
   }
 
   applyForces() {
-    if (this.y > height - 1.5*cellSize) {
-      this.y = height - 1.5*cellSize;
+    if (this.y >= height - 68) {
+      this.y = height - 68;
       this.gravity = 0; 
     } 
     // bounce off top wall
-    if (this.y === height - 1.5*cellSize - 110) {
+    if (this.y <= height - 68 - 150) {
       this.gravity *= -0.75;
     }
     this.y += this.gravity;
+  }
+
+  onGround() {
+    for (let block of groundBlocks){
+      //.log (dist(block.x, block.y, this.x, this.y) <= this.width+10) 
+
+       //groundBlocks.splice(groundBlocks.indexOf(block), 1);
+      
+    }
   }
 }
 
@@ -166,6 +173,8 @@ function create2dArray() {
   }
   return emptyArray;
 }
+
+
 
 function handleKeys() {
   if (keyIsDown(38)) { 
@@ -204,46 +213,60 @@ function handleKeys() {
 }
 
 
-function makeBlock(x, levY, numOfBlocks) {
-  for (let o = 0; o < numOfBlocks; o++){
-    block.x = x * cellSize - cellSize/2;
-    block.y = height-levY*cellSize+35;
-
-    groundBlocks.push(numOfBlocks);
-  }
+function makeBlock(xPlace, levY) {
+    block = {
+      x : (xPlace*cellSize-cellSize/2)+ cellSize,
+      y :  height-levY*cellSize+10,
+      size : 40,
+    }
+    groundBlocks.push(block);
 }
 
-function drawBlocks(numOfBlocks) { 
-  for(let i = 0; i < groundBlocks.length; i++) {
-    image(groundImg, block.x+i* cellSize, block.y, 50, 50);
+function drawBlocks() { 
+  for (let block of groundBlocks){
+    image(groundImg, block.x, block.y, cellSize, 50);
   }
 }
-
-  
-
 
 function displayGrid(grid) {
   for (let y = ROWS; y > 0; y--) {
     for (let x = 0; x < COLS; x++) {
-      if (grid[ROWS-y][x] !== x) {
-        //fill(color("black"));
-      }
-      else {
-        fill(color(0, 125, 250));
-      }
+     fill(color(0, 125, 250))
+      
       rect(x*cellSize, y*cellSize, cellSize, cellSize);
 
     }
   }
 }
 
-function onGround() {
-  for (let i = 0; i < groundBlocks.length; i++){
-    if (block.y > mario.y) {
-      //console.log(true);
-      //mario.y -= block.size;
-    }
+function createTerrain() {
+  //makeBlock(1, 1);
+}
+
+function mousePressed() {
+  let x = Math.floor(mouseX / cellSize);
+  let y = Math.floor(mouseY / 55);
+
+  makeBlock(x, ROWS-y)
+  theScreen[x][(Math.floor(ROWS-y))] = x+100
+
+ //console.log( checkBelow(Math.floor(ROWS-y)))
+ console.log(y)
+  }
+        
+
+function checkBelow(yPos) {
+  if (yPos === 1) {
+    return 1;
+  }
+  else {
+    //if (theScreen[Math.floor(mouseX / cellSize)][checkBelow(yPos)] < 100) {
+      return checkBelow(yPos - 1)
+   // }
   }
 }
+
+
+
 
 
