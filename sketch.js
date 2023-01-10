@@ -24,6 +24,8 @@ let facing;
 
 let mario;
 
+let blockGravity;
+let doApply = false;
 let grid;
 
 function preload() {
@@ -74,6 +76,9 @@ function draw() {
   
   drawBlocks();
   mario.applyForces();
+  blockFall();
+
+  mario.onGround();
 }
 
 class Mario {
@@ -155,9 +160,12 @@ class Mario {
 
   onGround() {
     for (let block of groundBlocks){
-      //.log (dist(block.x, block.y, this.x, this.y) <= this.width+10) 
+      if (dist(block.x, block.y, this.x, this.y) <= 40) {
+        groundBlocks.splice(groundBlocks.indexOf(block), 1);
+      }
 
-      //groundBlocks.splice(groundBlocks.indexOf(block), 1);
+      //
+      ///}
       
     }
   }
@@ -213,18 +221,25 @@ function handleKeys() {
 }
 
 
-function makeBlock(xPlace, levY) {
+function makeBlock(xPlace, levY, numOfB) {
   block = {
-    x : xPlace*cellSize-cellSize/2+ cellSize,
+    x : xPlace,
     y :  height-levY*cellSize-15,
     size : 40,
+    numOfB: numOfB,
   };
-  groundBlocks.push(block);
+  groundBlocks.push(block); 
+
+  for (let o = 1; o < block.numOfB-1; o++) {
+    theScreen[0][Math.floor(ROWS-block.y/50+o)] = o+100-1;
+  }
 }
 
 function drawBlocks() { 
   for (let block of groundBlocks){
-    image(groundImg, block.x, block.y, cellSize, 50);
+    for (let i = 0; i < block.numOfB; i++) {
+      image(groundImg, block.x*cellSize+ cellSize * i+ cellSize/2, block.y, cellSize, 50);
+    }
   }
 }
 
@@ -240,38 +255,45 @@ function displayGrid(grid) {
 }
 
 function createTerrain() {
-  makeBlock(0, 0);
-  makeBlock(5,0);
-  makeBlock(5, 1);
+  makeBlock(0, 0, 16);  
+  
 }
 
 function mousePressed() {
   let x = Math.floor(mouseX / cellSize);
   let y = Math.floor(mouseY / 50);
 
-  makeBlock(x, ROWS-y);
+  makeBlock(x, ROWS-y, 1);
   theScreen[x][Math.floor(ROWS-y)] = x+100;
 
-  //checkBelow(Math.floor(ROWS-y, 0));
+  checkBelow(Math.floor(ROWS-y));
 
-  checkBelow(5,0);
 }
         
-
-function checkBelow(yPos, count) {
+function checkBelow(yPos) {
   if (yPos === 0) {
     console.log("count");
   }
-  else {
-    if (theScreen[Math.floor(mouseX/ cellSize)][yPos-1] < 100) {
-      console.log("no")
-      //return checkBelow(yPos-1, count+1);   
-    }
+  else if (theScreen[Math.floor(mouseX/ cellSize)][yPos-1] < 100) {
     console.log("cheese");
+    doApply = true;
   }
+  else {
+    console.log("bad");
+    doApply = false;
+  }
+  
 }
 
-
+function blockFall() {
+  if (doApply === true) {
+    blockGravity = 1;
+  }
+  else {
+    blockGravity = 0;
+  }
+  //block.y += blockGravity;
+}
 
 
 
