@@ -161,7 +161,7 @@ class Mario {
   onGround() {
     for (let block of groundBlocks){
       if (dist(block.x, block.y, this.x, this.y) <= 40) {
-        groundBlocks.splice(groundBlocks.indexOf(block), 1);
+        //groundBlocks.splice(groundBlocks.indexOf(block), 1);
       }
 
       //
@@ -244,7 +244,7 @@ function drawBlocks() {
 }
 
 function displayGrid(grid) {
-  for (let y = ROWS; y > 0; y--) {
+  for (let y = ROWS; y > 2; y--) {
     for (let x = 0; x < COLS; x++) {
       fill(color(0, 125, 250));
       
@@ -261,10 +261,13 @@ function createTerrain() {
 
 function mousePressed() {
   let x = Math.floor(mouseX / cellSize);
-  let y = Math.floor(mouseY / 50);
+  let y = Math.floor(mouseY / cellSize);
 
-  makeBlock(x, ROWS-y, 1);
-  theScreen[x][Math.floor(ROWS-y)] = x+100;
+  if (y >= 2) {
+    makeBlock(x, ROWS-(y+0.25), 1);
+    theScreen[x][Math.floor(ROWS-y)] = x+100;
+  }
+  
 
   checkBelow(Math.floor(ROWS-y));
 
@@ -292,7 +295,14 @@ function blockFall() {
   else {
     blockGravity = 0;
   }
-  //block.y += blockGravity;
+  block.y += blockGravity;
+  for (let p = COLS; p > 0; p--) {
+    for (let w = ROWS; w > 0; w--) {
+      if (theScreen[p][w] >= 100) {
+        doApply = false;
+      }
+    }
+  }
 }
 
 
