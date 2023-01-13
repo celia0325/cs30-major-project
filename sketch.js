@@ -264,26 +264,29 @@ function mousePressed() {
   let y = Math.floor(mouseY / cellSize);
 
   if (y >= 2) {
-    makeBlock(x, ROWS-(y+0.25), 1);
-    theScreen[x][Math.floor(ROWS-y)] = x+100;
+    makeBlock(x, ROWS-y, 1);
   }
   
-
+  
   checkBelow(Math.floor(ROWS-y));
 
 }
         
 function checkBelow(yPos) {
-  if (yPos === 0) {
-    console.log("count");
-  }
-  else if (theScreen[Math.floor(mouseX/ cellSize)][yPos-1] < 100) {
-    console.log("cheese");
-    doApply = true;
-  }
-  else {
-    console.log("bad");
-    doApply = false;
+  for (let e = 0; e < 10; e++){
+    if (yPos <= 0) {
+      console.log("at bottom");
+      doApply = false;
+    }
+    else if (theScreen[yPos-1-e][Math.floor(mouseX/ cellSize)] < 100) {
+      console.log("nothing below");
+      doApply = true;
+
+    }
+    else {
+      console.log("BLOCK BELOW");
+      doApply = false;
+    }
   }
   
 }
@@ -291,18 +294,21 @@ function checkBelow(yPos) {
 function blockFall() {
   if (doApply === true) {
     blockGravity = 1;
+    for (let block of groundBlocks) {
+      if (block.y === height - cellSize*0.32) { //|| theScreen[block.y][block.x]<=0
+        doApply = false;
+      }
+      else {
+        doApply = true;
+      }
+    }
   }
   else {
     blockGravity = 0;
   }
   block.y += blockGravity;
-  for (let p = COLS; p > 0; p--) {
-    for (let w = ROWS; w > 0; w--) {
-      if (theScreen[p][w] >= 100) {
-        doApply = false;
-      }
-    }
-  }
+  
+  
 }
 
 
