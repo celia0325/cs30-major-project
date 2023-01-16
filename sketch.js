@@ -3,18 +3,6 @@ let ROWS;
 let COLS;
 let cellSize;
 
-let numOfFrames = 3;
-
-let rights = [];
-let lefts = [];
-let rStand;
-let lStand;
-let rJump;
-let lJump;
-let whichFrame = 0;
-let frameSwitch = 5; //if the frame count is divisble by this # it will switch what sprite is shown
-
-let yMin;
 let groundBlocks = [];
 let block;
 let groundImg;
@@ -23,6 +11,10 @@ let direction = "right";
 let facing;
 
 let mario;
+let walk;
+let stand;
+let jump;
+
 
 let blockGravity;
 let doApply = false;
@@ -30,24 +22,12 @@ let grid;
 
 function preload() {
   groundImg = loadImage("ground.png");
+  walk = loadAnimation(
+    "walk/1.png", 
+    "walk/2.png");
+  stand = loadAnimation("walk/0.png");
+  jump = loadAnimation("jump.png");
 
-  for (let i = 0; i < numOfFrames; i++) {
-    let rWalk = "right-walk/" + i + ".png";
-    let right = loadImage(rWalk);
-    rights.push(right);
-  }
-
-  for (let i = 0; i < numOfFrames; i++) {
-    let lWalk = "left-walk/" + i + ".png";
-    let left = loadImage(lWalk);
-    lefts.push(left);
-  }
-
-  rStand =  rights[0];
-  rJump = loadImage("mario-r-jump.png");
-
-  lStand =  lefts[0];
-  lJump = loadImage("mario-l-jump.png");
 }
 
 
@@ -62,8 +42,16 @@ function setup() {
   theScreen = create2dArray();
 
   // start sprite in the center of the screen
-  mario = new Mario();
-  img = rStand;
+  mario = new Sprite();
+  
+  mario.addAni("walking", walk);
+  mario.ani.scale = 0.4;
+ 
+  mario.addAni("standing", stand);
+  mario.addAni("jumping", jump);
+  mario.x = 50;
+  mario.y = height-1.4*50;
+ 
   createTerrain();
 }
 
@@ -71,155 +59,46 @@ function setup() {
 function draw() {
   background(color(0, 125, 250));
   displayGrid(theScreen);
-  handleKeys();
-  
-  
-  drawBlocks();
-  mario.applyForces();
-  blockFall();
 
-  mario.onGround();
+  mario_move();
+  
+  
+  //drawBlocks();
+ // blockFall();
+
 }
 
-class Mario {
-  constructor() {
-    this.height = 60;
-    this.width = 35;
-    this.walkSpeed = 18;
-    this.jumpSpeed = 5;
-    this.x = 30;
-    this.y = height-68;
-    this.gravity = 0;
-  }
-
-  move() {   
-    if (frameCount % frameSwitch === 0) {
-      whichFrame += 1;
-      if (direction === "right"){
-        if (width > this.x) {
-          this.x +=this.walkSpeed;
-        }
-        else {
-          this.x = 0;
-        }
-        facing = rights;
-      }
-      else if (direction === "left"){
-        if (width > this.x) {
-          if (this.x <= 0) {
-            this.x = width;
-          }
-          this.x -=this.walkSpeed;
-        }
-        facing = lefts;
-      }
-    }
-  
-    
-    if (whichFrame === rights.length) {
-      whichFrame = 0;
-      this.width = 35;
-    }
-
-    if (whichFrame === 1) {
-      this.width = 38;
-    }
-    else if (whichFrame === 2) {
-      this.width = 40;
-    }
-
+function mario_move(){
+  mario.ani = "walking";
+  if (kb.pressing("up")) {
     if (direction === "right") {
-      image(rights[whichFrame], this.x, this.y, this.width, this.height);
+      mario.mirror.x = true;
+
     }
-    else {
-      image(lefts[whichFrame], this.x, this.y, this.width, this.height);
-    }
-  }
-
-
-  jump() {
-    this.y-=1;
-    image(img, this.x, this.y, this.width, this.height);
-  }
-
-  display() {
-    image(img, this.x, this.y, this.width, this.height);
-  }
-
-  applyForces() {
-    if (this.y >= height - 68) {
-      this.y = height - 68;
-      this.gravity = 0; 
+    mario.ani = "jumping";
+    mario.ani.scale = 0.4;
+    let maxJump = mario.y;
+    if (mario.y > maxJump-100){
+      mario.vel.y = -3;
     } 
-    // bounce off top wall
-    if (this.y <= height - 68 - 150) {
-      this.gravity *= -0.75;
-    }
-    this.y += this.gravity;
   }
-
-  onGround() {
-    for (let block of groundBlocks){
-      if (dist(block.x, block.y, this.x, this.y) <= 40) {
-        //groundBlocks.splice(groundBlocks.indexOf(block), 1);
-      }
-
-      //
-      ///}
-      
-    }
+  else if (kb.pressing("right")) {
+    direction ="right";
+    mario.mirror.x = false;
+    mario.vel.x = 3;
   }
-}
-
-function create2dArray() {
-  let emptyArray = [];
-  for (let y = 0; y < ROWS; y ++) {
-    emptyArray.push([]);
-    for (let x = 0; x < COLS; x ++) {
-      emptyArray[y].push(x);
-    }
-  }
-  return emptyArray;
-}
-
-
-
-function handleKeys() {
-  if (keyIsDown(38)) { 
-    mario.gravity = -1 * mario.jumpSpeed;
-    mario.width = 45;
-    direction = "up";
-    mario.jump();
-    frameCount = 0;
-  }
-  else if (keyIsDown(37)) { 
+  else if (kb.pressing("left")) {
     direction = "left";
-    mario.move();
-  }
-  else if (keyIsDown(39)) {
-    direction = "right";
-    mario.move();
+    mario.mirror.x = true;
+    mario.vel.x = -3;
   }
   else {
-    if (direction === "up") {
-      mario.width = 45;
-      if (img === rStand){
-        img = rJump;
-      }
-      else if (img === lStand){
-        img = lJump;
-      }
-    }
-    else if (direction === "right") {
-      img = rStand;
-    }
-    else if (direction === "left") {
-      img = lStand;      
-    }
-    mario.display();
+    mario.ani = "standing";
+    mario.vel.x = 0;
+    mario.ani.scale = 0.4;
+    mario.vel.y = 0;
   }
 }
-
 
 function makeBlock(xPlace, levY, numOfB) {
   block = {
@@ -259,18 +138,18 @@ function createTerrain() {
   
 }
 
-function mousePressed() {
-  let x = Math.floor(mouseX / cellSize);
-  let y = Math.floor(mouseY / cellSize);
+//function mousePressed() {
+  //let x = Math.floor(mouseX / cellSize);
+  //let y = Math.floor(mouseY / cellSize);
 
-  if (y >= 2) {
-    makeBlock(x, ROWS-y, 1);
-  }
+ // if (y >= 2) {
+  //  makeBlock(x, ROWS-y, 1);
+  //}
   
   
-  checkBelow(Math.floor(ROWS-y));
+ //// checkBelow(Math.floor(ROWS-y));
 
-}
+//}
         
 function checkBelow(yPos) {
   for (let e = 0; e < 10; e++){
@@ -310,6 +189,19 @@ function blockFall() {
   
   
 }
+
+function create2dArray() {
+  let emptyArray = [];
+  for (let y = 0; y < ROWS; y ++) {
+    emptyArray.push([]);
+    for (let x = 0; x < COLS; x ++) {
+      emptyArray[y].push(x);
+    }
+  }
+  return emptyArray;
+}
+
+
 
 
 
