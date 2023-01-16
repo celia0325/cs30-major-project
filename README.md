@@ -1,6 +1,71 @@
 # cs30-major-project
 
 
+function createTerrain() {
+  makeBlock(0, 0, 16);  
+  
+}
+
+//function mousePressed() {
+  //let x = Math.floor(mouseX / cellSize);
+  //let y = Math.floor(mouseY / cellSize);
+
+ // if (y >= 2) {
+  //  makeBlock(x, ROWS-y, 1);
+  //}
+  
+  
+ //// checkBelow(Math.floor(ROWS-y));
+
+//}
+        
+function checkBelow(yPos) {
+  for (let e = 0; e < 10; e++){
+    if (yPos <= 0) {
+      console.log("at bottom");
+      doApply = false;
+    }
+    else if (theScreen[yPos-1-e][Math.floor(mouseX/ cellSize)] < 100) {
+      console.log("nothing below");
+      doApply = true;
+
+    }
+    else {
+      console.log("BLOCK BELOW");
+      doApply = false;
+    }
+  }
+  
+}
+
+function blockFall() {
+  if (doApply === true) {
+    blockGravity = 1;
+    for (let block of groundBlocks) {
+      if (block.y === height - cellSize*0.32) { //|| theScreen[block.y][block.x]<=0
+        doApply = false;
+      }
+      else {
+        doApply = true;
+      }
+    }
+  }
+  else {
+    blockGravity = 0;
+  }
+  block.y += blockGravity;
+  
+  
+}
+
+function drawBlocks() { 
+  for (let block of groundBlocks){
+    for (let i = 0; i < block.numOfB; i++) {
+      image(groundImg, block.x*cellSize+ cellSize * i+ cellSize/2, block.y, cellSize, 50);
+    }
+  }
+}
+
 class Mario {
   constructor() {
     this.height = 60;

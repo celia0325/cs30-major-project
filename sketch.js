@@ -3,10 +3,8 @@ let ROWS;
 let COLS;
 let cellSize;
 
-let groundBlocks = [];
-let block;
-let groundImg;
-let img;
+let blocks;
+let ground;
 let direction = "right";
 let facing;
 
@@ -20,8 +18,10 @@ let blockGravity;
 let doApply = false;
 let grid;
 
+let numOfB;
+
 function preload() {
-  groundImg = loadImage("ground.png");
+  ground = loadAnimation("ground.png");
   walk = loadAnimation(
     "walk/1.png", 
     "walk/2.png");
@@ -50,9 +50,29 @@ function setup() {
   mario.addAni("standing", stand);
   mario.addAni("jumping", jump);
   mario.x = 50;
-  mario.y = height-1.4*50;
- 
-  createTerrain();
+  mario.y = height-1.4*50-200;
+  mario.height = 65;
+  mario.width = 35
+
+
+/// blocks
+  blocks = new Group();
+  blocks.w = 50;
+  blocks.h = 45
+
+  blocks.ani.scale = 0.9;
+  while (blocks.length < 2) {
+		let block = new blocks.Sprite();
+
+    
+    
+    block.collider = "static"
+    
+    block.addAni("block", ground);  
+		block.x =  blocks.length * 100;
+    block.y = 100
+    
+	}
 }
 
 
@@ -60,13 +80,14 @@ function draw() {
   background(color(0, 125, 250));
   displayGrid(theScreen);
 
-  mario_move();
-  
-  
-  //drawBlocks();
- // blockFall();
+  blocks.debug = mouse.pressing();
 
+  mario_move();
 }
+
+//function make_blocks() {
+  
+//}
 
 function mario_move(){
   mario.ani = "walking";
@@ -100,28 +121,6 @@ function mario_move(){
   }
 }
 
-function makeBlock(xPlace, levY, numOfB) {
-  block = {
-    x : xPlace,
-    y :  height-levY*cellSize-15,
-    size : 40,
-    numOfB: numOfB,
-  };
-  groundBlocks.push(block); 
-
-  for (let o = 1; o < block.numOfB-1; o++) {
-    theScreen[0][Math.floor(ROWS-block.y/50+o)] = o+100-1;
-  }
-}
-
-function drawBlocks() { 
-  for (let block of groundBlocks){
-    for (let i = 0; i < block.numOfB; i++) {
-      image(groundImg, block.x*cellSize+ cellSize * i+ cellSize/2, block.y, cellSize, 50);
-    }
-  }
-}
-
 function displayGrid(grid) {
   for (let y = ROWS; y > 2; y--) {
     for (let x = 0; x < COLS; x++) {
@@ -133,61 +132,8 @@ function displayGrid(grid) {
   }
 }
 
-function createTerrain() {
-  makeBlock(0, 0, 16);  
-  
-}
-
-//function mousePressed() {
-  //let x = Math.floor(mouseX / cellSize);
-  //let y = Math.floor(mouseY / cellSize);
-
- // if (y >= 2) {
-  //  makeBlock(x, ROWS-y, 1);
-  //}
-  
-  
- //// checkBelow(Math.floor(ROWS-y));
-
-//}
-        
-function checkBelow(yPos) {
-  for (let e = 0; e < 10; e++){
-    if (yPos <= 0) {
-      console.log("at bottom");
-      doApply = false;
-    }
-    else if (theScreen[yPos-1-e][Math.floor(mouseX/ cellSize)] < 100) {
-      console.log("nothing below");
-      doApply = true;
-
-    }
-    else {
-      console.log("BLOCK BELOW");
-      doApply = false;
-    }
-  }
-  
-}
-
-function blockFall() {
-  if (doApply === true) {
-    blockGravity = 1;
-    for (let block of groundBlocks) {
-      if (block.y === height - cellSize*0.32) { //|| theScreen[block.y][block.x]<=0
-        doApply = false;
-      }
-      else {
-        doApply = true;
-      }
-    }
-  }
-  else {
-    blockGravity = 0;
-  }
-  block.y += blockGravity;
-  
-  
+function mousePressed() {
+  //
 }
 
 function create2dArray() {
