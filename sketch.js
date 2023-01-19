@@ -4,7 +4,9 @@ let COLS;
 let cellSize;
 
 let blocks;
-let ground;
+let block;
+let ground
+
 let direction = "right";
 let maxJump;
 
@@ -42,7 +44,7 @@ function setup() {
 
   // start sprite in the center of the screen
   mario = new Sprite();
-  //mario.collider = "k";
+  mario.collider = "k";
   
   mario.addAni("walking", walk);
   mario.ani.scale = 0.4;
@@ -58,43 +60,58 @@ function setup() {
   /// blocks
   blocks = new Group();
   blocks.w = cellSize;
-  blocks.h = 50;
+  blocks.h = cellSize;
+
+  //blocks.addAni("block", ground);  
+  //blocks.ani.scale = 0.1;
+
   
-  make_blocks(0, 9);
-  make_blocks(1, 9);
-  make_blocks(2, 9);
+  
+  world.gravity.y = 10
+
+
 }
 
 
 function draw() {
+  clear();
   background(color(0, 125, 250));
   displayGrid(theScreen);
 
-  if (mario.colliding(blocks)) {
-    world.gravity.y = 1;
+  loopFuctions();
+}
+
+function loopFuctions() {
+
+  if (blocks.collides(blocks)) {
+    blocks.color = "red"
   }
   else {
-    world.gravity.y = 20
+    blocks.color = "blue"
+  }
+  if (mouse.presses()) {
+    new blocks.Sprite(mouse.x, mouse.y);
+
+    //blocks.x = (mouse.x+1) * blocks.w-cellSize/2;
+  //blocks.y = height-((ROWS-mouse.y)*blocks.h-15);
   }
 
-  mario.debug = mouse.pressing();
+  if (mario.colliding(blocks)) {
+		mario.color = 'red';
+	} 
+  else {
+    mario.color = "blue"
+  }
+
+  if (mario.collides(blocks) > 10) {
+		mario.vel.y = -5;
+  }
+  
+
+  //mario.debug = mouse.pressing();
   
 
   mario_move();
-}
-
-function make_blocks(x, y) {
-  let block = new blocks.Sprite();
-
-    
-    
-  block.collider = "k";
-    
-  block.addAni("block", ground);  
-  block.ani.scale = 0.88;
-  block.x = (x+1) * blocks.w-cellSize/2;
-  block.y = height-((ROWS-y+1)*block.h-35);
-    
 }
 
 function mario_move(){
@@ -106,10 +123,10 @@ function mario_move(){
     mario.ani = "jumping";
     mario.ani.scale = 0.4;
     if (mario.y < 200){
-      world.gravity.y = 200;
+      mario.vel.y = 10;
     }
     else {
-      world.gravity.y = - 75;
+      mario.vel.y = 25;
     }
   }
   else if (kb.pressing("right")) {
@@ -131,7 +148,6 @@ function mario_move(){
   }
   else {
     mario.ani = "standing";
-    mario.vel.x = 0;
     mario.ani.scale = 0.4;
   }
 }
@@ -147,12 +163,7 @@ function displayGrid(grid) {
   }
 }
 
-function mousePressed() {
-  let x = Math.floor(mouseX / cellSize);
-  let y = Math.floor(mouseY / cellSize);
-  console.log(x,y);
-  make_blocks(x, y, 20);
-}
+
 
 function create2dArray() {
   let emptyArray = [];
