@@ -83,6 +83,7 @@ function draw() {
 
 function loopFuctions() {
 
+  if (block)
   if (blocks.collides(blocks)) {
     blocks.color = "red"
   }
