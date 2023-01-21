@@ -40,7 +40,7 @@ function setup() {
   
   // start sprite in the center of the screen
   mario = new Sprite();
-  mario.collider = "k";
+  //mario.collider = "k";
   
   mario.addAni("walking", walk);
   mario.ani.scale = 0.4;
@@ -96,12 +96,12 @@ function make_blocks(x, y) {
   
   
   
-  block.collider = "d";
+  block.collider = "s";
   
   block.addAni("block", ground);  
   block.ani.scale = 0.88;
   block.x = (x+1) * blocks.w-cellSize/2;
-  block.y = height-((ROWS-y-0.5)*block.h-10);
+  block.y = height-((ROWS-y)*block.h-15);
   
 }
 function displayGrid(grid) {
@@ -134,7 +134,6 @@ function create2dArray() {
 
 function loopFuctions() {
   if(block.y % 10 === 0) {
-    console.log(block.y)
     blocks.collider = "s"
   }
   //mario.debug = mouse.pressing();
