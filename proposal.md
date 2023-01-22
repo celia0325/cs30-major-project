@@ -2,15 +2,13 @@
 
 Mario Bros Copy
 
-## Logic list
+## Needs
 
 - gravity + jumping
 - collision with enemies
 - collision with coins / power ups
-- terrain
 - movement
 
-## Needs list
-
-- sprites
+## Wants
+- customizable terrain
 - level/s
