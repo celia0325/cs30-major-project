@@ -14,6 +14,10 @@ let needcoin = true;
 let coin_ani;
 
 let mystery_box;
+let bricks;
+let brick;
+let brick1;
+let new_piece;
   
 let mario;
 let walk;
@@ -26,9 +30,12 @@ let grid;
 let numOfB;
   
 function preload() {
-  ground = loadAnimation("peices/ground.png");
-  mystery_box = loadAnimation("peices/box.png");
-  coin_ani = loadAnimation("peices/mariocoin.png")
+  ground = loadAnimation("pieces/ground.png");
+  mystery_box = loadAnimation("pieces/box.png");
+  coin_ani = loadAnimation("pieces/mariocoin.png");
+  brick1 = loadAnimation("pieces/coin_brick.png");
+  powerUp_ani = loadAnimation("pieces/mushroom.png")
+
   walk = loadAnimation(
     "walk/1.png", 
     "walk/2.png");
@@ -69,6 +76,10 @@ function setup() {
   boxes.w = cellSize;
   boxes.h = cellSize-0.25;
 
+  bricks = new Group();
+  bricks.w = cellSize;
+  bricks.h = cellSize-0.25;
+
 
   coin = new Sprite(0,0);
   coin.static = true
@@ -76,21 +87,32 @@ function setup() {
   coin.addAni("coin", coin_ani)
   coin.ani.scale = 0.25
   coin.visible = false;
+
+  powerUp = new Sprite(0,0);
+  powerUp.static = true
+  powerUp.w = cellSize-5
+  powerUp.addAni("powerUp", powerUp_ani)
+  powerUp.ani.scale = 0.05
+  powerUp.visible = false;
   
   make_blocks(0, 10, 20);
+
+  make_box(7,7);
+  make_brick(6,7)
 }
   
   
 function draw() {
   mario.rotation = 0;
   block.rotation = 0;
+  powerUp.rotation = 0
   
   background(color(0, 125, 250));
   displayGrid(theScreen);
   
   loopFuctions();
   
-  coin.debug = mouse.pressing();
+  powerUp.debug = mouse.pressing();
   
   
   mario_move();
@@ -101,9 +123,6 @@ function make_blocks(x, y, numOfB) {
     block = new blocks.Sprite();
     
     block.addAni("ground", ground);
-    
-    
-    
     block.collider = "k";
     
     block.ani = ground;  
@@ -116,15 +135,26 @@ function make_blocks(x, y, numOfB) {
   
 }
 
-function make_box(x, y) {
-  box = new boxes.Sprite(mouse.x, mouse.y)
-  box.addAni("mystery", mystery_box)
-  box.static = true
-  box.ani.scale = 0.7
-    
-    box.x = (x+1) * box.w-cellSize/2;
+function make_brick(x, y) {
+    brick = new bricks.Sprite()
+    brick.addAni("coin brick", brick1)
+    brick.ani.scale = 0.09
+ 
+    brick.static = true
+    brick.x = (x+1) * brick.w-cellSize/2;
 
-    box.y = height-((ROWS-y)*box.h-15);
+    brick.y = height-((ROWS-y)*brick.h-15);
+}
+
+function make_box(x, y) {
+  box = new boxes.Sprite()
+  box.addAni("mystery box", mystery_box)
+  box.ani.scale = 0.7
+
+  box.static = true  
+  box.x = (x+1) * box.w-cellSize/2;
+
+  box.y = height-((ROWS-y)*box.h-15);
 }
   
 
@@ -143,9 +173,9 @@ function mousePressed() {
   let y = Math.floor(mouseY / (cellSize)-0.25);
   console.log(x,y);
   needcoin = true
-  make_box(x,y)
+  //make_brick(x,y)
   
-  //make_blocks(x, y, 1);
+  make_box(x, y);
 }
   
 function create2dArray() {
@@ -177,14 +207,25 @@ function loopFuctions() {
   }
 
   if (mario.overlaps(coin)) coin.remove();
+  if (mario.overlaps(powerUp)) powerUp.remove();
 
-  if (mario.colliding(boxes) > 0 && needcoin === true) {
+  if (mario.colliding(bricks) > 0) {
     console.log(true)
     coin.visible = true
-    coin.x = box.x
-    coin.y = box.y-cellSize
-    needcoin = false;
-    
+    coin.x = brick.x
+    coin.y = brick.y-cellSize
+  }
+
+  if (mario.colliding(boxes) > 0) {
+    console.log(true)
+    powerUp.visible = true
+    powerUp.x = box.x
+    powerUp.y = box.y-cellSize
+    //needcoin = false;
+  }
+  if (powerUp.visible === true) {
+    powerUp.dynamic = true
+    powerUp.vel.x = 2.9;
   }
 
  
