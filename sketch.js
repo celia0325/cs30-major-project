@@ -5,6 +5,8 @@ let ground;
 let block;
 let direction = "right";
 let box;
+let flag;
+let flag_pole;
 
 let coin;
 let needcoin = true;
@@ -17,7 +19,10 @@ let aBrick;
 
 let enemies;
 let enemy;
-let goomba
+let goomba;
+
+let cloud;
+let cloud1;
   
 let mario;
 let walk;
@@ -27,6 +32,8 @@ let jump;
 let numOfB;
   
 function preload() {
+  cloud1 = loadAnimation("pieces/cloud.png");
+  flag = loadAnimation("pieces/marioflag.png")
   ground = loadAnimation("pieces/ground.png");
   mystery_box = loadAnimation("pieces/box.png");
   coin_ani = loadAnimation("pieces/mariocoin.png");
@@ -43,6 +50,14 @@ function preload() {
 }
 
 function setup() {
+for (let c = -3; c < 15; c++) {
+  cloud = new Sprite(3*c*100, random(250, height-200));
+  cloud.collider = "s"
+  cloud.addAni("cloud", cloud1);
+  cloud.ani.scale = 0.25
+}
+
+
   imageMode(CENTER);
   createCanvas(windowWidth, windowHeight);
   cellSize = 50;
@@ -95,9 +110,18 @@ function setup() {
   powerUp.addAni("powerUp", powerUp_ani)
   powerUp.ani.scale = 0.05
   powerUp.visible = false;
+
+  flag_pole = new Sprite(2075, height-200);
+  flag_pole.collider = "s"
+  flag_pole.addAni("flag", flag)
+  flag_pole.ani.scale = 0.5;
+  flag_pole.w = 10
   
-  make_blocks(0, 10, 50);
-  make_blocks(0, 9, 1);
+  make_blocks(-8, 10, 50);
+  make_blocks(-8, 9, 1);
+  block.visible = false;
+  make_blocks(-8, 8, 1);
+  block.visible = false;
 
   make_box(7,7);
   make_brick(6,7)
@@ -114,7 +138,7 @@ function draw() {
   
   loopFuctions();
   
-  enemies.debug = mouse.pressing();
+  flag_pole.debug = mouse.pressing();
 }
   
 function make_blocks(x, y, numOfB) {
@@ -157,10 +181,14 @@ function make_box(x, y) {
 }
   
 function mousePressed() {
-  goomba = new enemies.Sprite(mouse.x, block.y);
-  goomba.addAni("goomba", enemy);
-  goomba.ani.scale = 0.25;
-  enemies.visible = true;
+  //goomba = new enemies.Sprite(mouse.x, block.y);
+  //goomba.addAni("goomba", enemy);
+  //goomba.ani.scale = 0.25;
+  //enemies.visible = true;
+
+  let x = Math.floor(mouse.x/cellSize)
+  let y = Math.floor(mouse.y/cellSize)
+  console.log(mouse.x, mouse.y)
 }
 
 function loopFuctions() {
@@ -203,16 +231,13 @@ function loopFuctions() {
     powerUp.dynamic = true
     powerUp.vel.x = 2.9;
   }
-  if (enemies.colliding(blocks)){
-    enemies.visible = true;
+  if (enemies.collides(mario)){
+    mario.ani = true;
   }
+
   if (enemies.visible === true) {
     enemies.vel.x = -2;
   }
-
- 
-  
-
   mario_move();
 }
 
@@ -240,10 +265,6 @@ function mario_move(){
     direction = "left";
     mario.mirror.x = true;
     mario.vel.x = -3;
-  }
-  else if (kb.pressing("down")) {
-    mario.ani = "standing";
-    console.log(world.gravity.y);
   }
   else if (kb.pressing("space")) {
     mario.collider = "d"
