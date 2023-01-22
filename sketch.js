@@ -1,6 +1,3 @@
-let theScreen;
-let ROWS;
-let COLS;
 let cellSize;
 let blocks;
 let boxes
@@ -16,25 +13,27 @@ let coin_ani;
 let mystery_box;
 let bricks;
 let brick;
-let brick1;
-let new_piece;
+let aBrick;
+
+let enemies;
+let enemy;
+let goomba
   
 let mario;
 let walk;
 let stand;
 let jump;
-  
-let blockGravity;
-let doApply = false;
-let grid;
+
 let numOfB;
   
 function preload() {
   ground = loadAnimation("pieces/ground.png");
   mystery_box = loadAnimation("pieces/box.png");
   coin_ani = loadAnimation("pieces/mariocoin.png");
-  brick1 = loadAnimation("pieces/coin_brick.png");
+  aBrick = loadAnimation("pieces/coin_brick.png");
   powerUp_ani = loadAnimation("pieces/mushroom.png")
+
+  enemy = loadAnimation("pieces/goomba.png")
 
   walk = loadAnimation(
     "walk/1.png", 
@@ -47,10 +46,7 @@ function setup() {
   imageMode(CENTER);
   createCanvas(windowWidth, windowHeight);
   cellSize = 50;
-  ROWS = height/cellSize-0.78;
-  COLS = width/cellSize -0.9;
-  
-  theScreen = create2dArray();  
+  ROWS = height/cellSize-0.78;  
   
   // start sprite in the center of the screen
   mario = new Sprite();
@@ -69,8 +65,13 @@ function setup() {
   
   /// blocks
   blocks = new Group();
-  blocks.w = cellSize;
+  blocks.w = cellSize-1;
   blocks.h = cellSize-0.25;
+
+  enemies = new Group();
+  enemies.w = 40;
+  enemies.h = 35;
+  enemies.visible = false;
 
   boxes = new Group();
   boxes.w = cellSize;
@@ -95,7 +96,8 @@ function setup() {
   powerUp.ani.scale = 0.05
   powerUp.visible = false;
   
-  make_blocks(0, 10, 20);
+  make_blocks(0, 10, 50);
+  make_blocks(0, 9, 1);
 
   make_box(7,7);
   make_brick(6,7)
@@ -105,17 +107,14 @@ function setup() {
 function draw() {
   mario.rotation = 0;
   block.rotation = 0;
-  powerUp.rotation = 0
+  powerUp.rotation = 0;
+  enemies.rotation = 0;
   
   background(color(0, 125, 250));
-  displayGrid(theScreen);
   
   loopFuctions();
   
-  powerUp.debug = mouse.pressing();
-  
-  
-  mario_move();
+  enemies.debug = mouse.pressing();
 }
   
 function make_blocks(x, y, numOfB) {
@@ -137,7 +136,7 @@ function make_blocks(x, y, numOfB) {
 
 function make_brick(x, y) {
     brick = new bricks.Sprite()
-    brick.addAni("coin brick", brick1)
+    brick.addAni("coin brick", aBrick)
     brick.ani.scale = 0.09
  
     brick.static = true
@@ -157,39 +156,16 @@ function make_box(x, y) {
   box.y = height-((ROWS-y)*box.h-15);
 }
   
-
-function displayGrid(grid) {
-  for (let y = ROWS; y > 2; y--) {
-    for (let x = 0; x < COLS; x++) {
-      fill(color(0, 125, 250));
-        
-      rect(x*cellSize, y*cellSize, cellSize, cellSize);
-    }
-  }
-}
-  
 function mousePressed() {
-  let x = Math.floor(mouseX / cellSize);
-  let y = Math.floor(mouseY / (cellSize)-0.25);
-  console.log(x,y);
-  needcoin = true
-  //make_brick(x,y)
-  
-  make_box(x, y);
-}
-  
-function create2dArray() {
-  let emptyArray = [];
-  for (let y = 0; y < ROWS; y ++) {
-    emptyArray.push([]);
-    for (let x = 0; x < COLS; x ++) {
-      emptyArray[y].push(x);
-    }
-  }
-  return emptyArray;
+  goomba = new enemies.Sprite(mouse.x, block.y);
+  goomba.addAni("goomba", enemy);
+  goomba.ani.scale = 0.25;
+  enemies.visible = true;
 }
 
 function loopFuctions() {
+  mario_move();
+  camera.x = mario.x
   if (block.y % 10 === 0){
     console.log(block.y)
   }
@@ -226,6 +202,12 @@ function loopFuctions() {
   if (powerUp.visible === true) {
     powerUp.dynamic = true
     powerUp.vel.x = 2.9;
+  }
+  if (enemies.colliding(blocks)){
+    enemies.visible = true;
+  }
+  if (enemies.visible === true) {
+    enemies.vel.x = -2;
   }
 
  
@@ -264,10 +246,7 @@ function mario_move(){
     console.log(world.gravity.y);
   }
   else if (kb.pressing("space")) {
-    mario.dynamic = true;
-  }
-  else if (kb.pressing("p")) {
-
+    mario.collider = "d"
   }
   else {
     
@@ -276,31 +255,6 @@ function mario_move(){
     marioMove = false;
   }
 }
-
-function displayGrid(grid) {
-  for (let y = ROWS; y > 2; y--) {
-    for (let x = 0; x < COLS; x++) {
-      fill(color(0, 125, 250));
-      
-      rect(x*cellSize, y*cellSize, cellSize, cellSize);
-
-    }
-  }
-}
-
-
-
-function create2dArray() {
-  let emptyArray = [];
-  for (let y = 0; y < ROWS; y ++) {
-    emptyArray.push([]);
-    for (let x = 0; x < COLS; x ++) {
-      emptyArray[y].push(x);
-    }
-  }
-  return emptyArray;
-}
-
 
 
 
