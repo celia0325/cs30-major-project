@@ -30,6 +30,9 @@ let stand;
 let jump;
 
 let numOfB;
+let littlem
+
+let mario_hit = false;
   
 function preload() {
   cloud1 = loadAnimation("pieces/cloud.png");
@@ -42,6 +45,7 @@ function preload() {
 
   enemy = loadAnimation("pieces/goomba.png")
 
+  littlem = loadAnimation("pieces/tiny m.png")
   walk = loadAnimation(
     "walk/1.png", 
     "walk/2.png");
@@ -72,6 +76,7 @@ for (let c = -3; c < 15; c++) {
   
   mario.addAni("standing", stand);
   mario.addAni("jumping", jump);
+  mario.addAni("shrink", littlem)
   mario.x = 50;
   mario.y = height-1.45*50-300;
   mario.height = 65;
@@ -138,7 +143,7 @@ function draw() {
   
   loopFuctions();
   
-  flag_pole.debug = mouse.pressing();
+  //mario.debug = mouse.pressing();
 }
   
 function make_blocks(x, y, numOfB) {
@@ -181,22 +186,16 @@ function make_box(x, y) {
 }
   
 function mousePressed() {
-  //goomba = new enemies.Sprite(mouse.x, block.y);
-  //goomba.addAni("goomba", enemy);
-  //goomba.ani.scale = 0.25;
-  //enemies.visible = true;
+  goomba = new enemies.Sprite(mouse.x, block.y);
+  goomba.addAni("goomba", enemy);
+  goomba.ani.scale = 0.25;
+  enemies.visible = true;
 
-  let x = Math.floor(mouse.x/cellSize)
-  let y = Math.floor(mouse.y/cellSize)
-  console.log(mouse.x, mouse.y)
 }
 
 function loopFuctions() {
   mario_move();
   camera.x = mario.x
-  if (block.y % 10 === 0){
-    console.log(block.y)
-  }
   if (block.y >= height-15) {
     blocks.collider = "s"
   }
@@ -210,18 +209,22 @@ function loopFuctions() {
     world.gravity.y = 20;
   }
 
+  if (mario.colliding(powerUp) > 0) {
+    powerUp.remove();
+    mario_hit = false;
+    console.log(mario_hit)
+  }
+
   if (mario.overlaps(coin)) coin.remove();
-  if (mario.overlaps(powerUp)) powerUp.remove();
+
 
   if (mario.colliding(bricks) > 0) {
-    console.log(true)
     coin.visible = true
     coin.x = brick.x
     coin.y = brick.y-cellSize
   }
 
   if (mario.colliding(boxes) > 0) {
-    console.log(true)
     powerUp.visible = true
     powerUp.x = box.x
     powerUp.y = box.y-cellSize
@@ -231,8 +234,8 @@ function loopFuctions() {
     powerUp.dynamic = true
     powerUp.vel.x = 2.9;
   }
-  if (enemies.collides(mario)){
-    mario.ani = true;
+  if (mario.collides(enemies)){
+    mario_hit = true;
   }
 
   if (enemies.visible === true) {
@@ -242,7 +245,14 @@ function loopFuctions() {
 }
 
 function mario_move(){
-  mario.ani = "walking";
+  if (mario_hit === false){
+    mario.ani = "walking";
+    mario.h = 65;
+  }
+  else {
+    mario.ani = "shrink"
+    mario.h = 40
+  }
   if (kb.pressing("up")) {
     if (direction === "left") {
       mario.mirror.x = true;
@@ -270,9 +280,15 @@ function mario_move(){
     mario.collider = "d"
   }
   else {
-    
-    mario.ani = "standing";
-    mario.ani.scale = 0.4;
+    if (mario_hit === false){
+      mario.ani = "standing";
+      mario.ani.scale = 0.4;
+    }
+    else {
+      mario.ani = "shrink"
+      mario.h = 40;
+      mario.ani.scale = 0.08;
+    }
     marioMove = false;
   }
 }
