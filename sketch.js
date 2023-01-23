@@ -1,44 +1,29 @@
-let cellSize;
-let blocks;
-let boxes;
-let ground;
-let block;
-let direction = "right";
-let box;
-let flag;
-let flag_pole;
-
-let coin;
-let needcoin = true;
-let coin_ani;
-
-let mystery_box;
-let bricks;
-let brick;
-let aBrick;
-
-let enemies;
-let enemy;
-let goomba;
-
-let tinyj;
-let small_j;
-
-let cloud;
-let cloud1;
-  
 let mario;
-let walk;
-let stand;
-let jump;
+let walk, stand, jump;
+let littlem, tinyj;
+
+let cellSize;
+let direction = "right";
+
+let  enemy, enemies, goomba;
+
+let ground, blocks, block;
+// eslint-disable-next-line no-redeclare
+let mystery_box, boxes, box;
+let aBrick, bricks, brick;
+
+let powerUp_ani, powerUp;
+let coin, coin_ani; // coins
+let needcoin = true;
+
+let flag, flag_pole;
+let cloud, clouds;
 
 let numOfB;
-let littlem;
-
 let mario_hit = false;
   
 function preload() {
-  cloud1 = loadAnimation("pieces/cloud.png");
+  clouds = loadAnimation("pieces/cloud.png");
   flag = loadAnimation("pieces/marioflag.png");
   ground = loadAnimation("pieces/ground.png");
   mystery_box = loadAnimation("pieces/box.png");
@@ -59,10 +44,11 @@ function preload() {
 
 function setup() {
   for (let c = -3; c < 15; c++) {
-    cloud = new Sprite(3*c*100, random(250, height-200));
+    cloud = new Sprite(c*300, random(250, height-200));
     cloud.collider = "s";
-    cloud.addAni("cloud", cloud1);
+    cloud.addAni("cloud", clouds);
     cloud.ani.scale = 0.25;
+    cloud.height = 10
   }
 
 
@@ -83,7 +69,7 @@ function setup() {
   mario.addAni("shrink", littlem);
   mario.addAni("shrink jump", tinyj);
   mario.x = 50;
-  mario.y = height-1.45*50-300;
+  mario.y = height/3;
   mario.height = 65;
   mario.width = 35;
   
@@ -126,6 +112,8 @@ function setup() {
   flag_pole.addAni("flag", flag);
   flag_pole.ani.scale = 0.5;
   flag_pole.w = 10;
+
+  make_blocks(-8, 1, 5);
   
   make_blocks(-8, 10, 50);
   make_blocks(-8, 9, 1);
@@ -147,8 +135,6 @@ function draw() {
   background(color(0, 125, 250));
   
   loopFuctions();
-  
-  //mario.debug = mouse.pressing();
 }
   
 function make_blocks(x, y, numOfB) {
@@ -163,7 +149,7 @@ function make_blocks(x, y, numOfB) {
     
     block.x = (x+n) * blocks.w-cellSize/2;
 
-    block.y = height-((ROWS-y)*block.h-15);
+    block.y = height- (ROWS-y)*block.h-15;
   }
   
 }
@@ -183,10 +169,8 @@ function make_box(x, y) {
   box = new boxes.Sprite();
   box.addAni("mystery box", mystery_box);
   box.ani.scale = 0.7;
-
   box.static = true;  
   box.x = (x+1) * box.w-cellSize/2;
-
   box.y = height-((ROWS-y)*box.h-15);
 }
   
@@ -195,7 +179,6 @@ function mousePressed() {
   goomba.addAni("goomba", enemy);
   goomba.ani.scale = 0.25;
   enemies.visible = true;
-
 }
 
 function loopFuctions() {
@@ -260,7 +243,7 @@ function mario_move(){
     mario.ani = "shrink";
     mario.h = 40;
   }
-  if (kb.pressing("up")) {
+  if (kb.pressed("up")) {
     if (direction === "left") {
       mario.mirror.x = true;
     }
@@ -302,7 +285,6 @@ function mario_move(){
       mario.h = 40;
       mario.ani.scale = 0.08;
     }
-    marioMove = false;
   }
 }
 
