@@ -1,6 +1,8 @@
 /* eslint-disable no-undef */
 // Celia Newell
 // November 19, 2022
+// extra for experts:
+// Developing gravity in p5.js; learning how to use p5.play
 
 
 let mario;

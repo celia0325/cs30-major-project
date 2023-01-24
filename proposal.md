@@ -3,12 +3,12 @@
 Mario Bros Copy
 
 ## Needs
-
-- gravity + jumping
+- gravity + jumping 
 - collision with enemies
 - collision with coins / power ups
-- movement
+- movement physics
 
 ## Wants
 - customizable terrain
 - level/s
+- start screen + level screens

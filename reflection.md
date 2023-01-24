@@ -1,14 +1,8 @@
-# Proposal
+# Reflection
 
-Mario Bros Copy
+I had really high hopes for this project and I think I often aim for perfection. I think the development of this
+game really proved that I can stay persistent on project even when I work on minor details for weeks. I do really wish I had started off programming using p5.play; I think I would be more impressed with my final product. I only started learning p5.play after the christmas break which didn't give me much time to fully understand the all the concepts. I am happy with the amount of progress I was able to make using p5.play in the 2 weeks I had. I also think the progress I made before transfering to p5.play was pretty impressive for the amount of physics I was able to figure out. My main wish was that p5.play had collision based on sides; this would make the block stacking I was attempting much easier. Other pieces that would have worked better are brick / mystery box collision and enemy collision. Because there is no feature like this I don't think I could make the game as accurate as I would have liked. For example, if Mario jumps onto the enemy he still shrinks as it counts as a hit. If I was able to make different if statements based on if Mario collides with the top/sides/bottom of other sprites.
 
-## Needs
+If I were to do this project again I would definitley start with p5.play. I didn't work on this project as much as I probably should have during the winter break; I was frustrated after working on the block stacking for a month and I was making little progress. This is what pushed me to switch to p5.play and I'm glad I did. I have every factor of my needs to have list, though I don't have multiple enemies only the goombas. The gravity/physics was my main focus which I think I showed well before using p5.play. My nice to have list is mostly undone, however the way I currently have it coded customizing levels/block placements is relatively easy. I definitely think could have figured out block placement if I had more time. I would have liked to design better sprites for my tiny Mario and work on the ending flag pole, as well as start and end screens.
 
-- gravity + jumping
-- collision with enemies
-- collision with coins / power ups
-- movement
-
-## Wants
-- customizable terrain
-- level/s
+In the end I'm really proud of myself for staying on my original idea and not switching it up when things got difficult. I want to continue working on this game for the next year(ish) because I have taken all the comp sci classes I can and I want to make sure I keep my coding knowledge relatively fresh. I think I have learned so muchh through trial and error during this project and I'll definitley make more projects like this one.
