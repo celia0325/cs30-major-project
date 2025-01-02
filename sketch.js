@@ -49,8 +49,8 @@ function preload() {
   walk = loadAnimation(
     "walk/1.png", 
     "walk/2.png");
+  jump = loadAnimation("walk/3.png")
   stand = loadAnimation("walk/0.png");
-  jump = loadAnimation("jump.png");
 }
 
 function setup() {
@@ -248,7 +248,7 @@ function loopFuctions() {
   // moves powerup only when visible
   if (powerUp.visible === true) {
     powerUp.dynamic = true;
-    powerUp.vel.x = 2.9;
+    powerUp.vel.x = 2.4;
   }
 }
 
