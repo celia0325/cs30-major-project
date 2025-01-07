@@ -44,13 +44,16 @@ function preload() {
 
   enemy = loadAnimation("pieces/goomba.png");
 
-  littlem = loadAnimation("pieces/tiny m.png");
-  tinyj = loadAnimation("pieces/small jump.png");
   walk = loadAnimation(
     "walk/1.png", 
     "walk/2.png");
   jump = loadAnimation("walk/3.png")
   stand = loadAnimation("walk/0.png");
+  ministand = loadAnimation("mini walk/0.png")
+  miniwalk = loadAnimation(
+    "mini walk/0.png", 
+    "mini walk/1.png");
+  minijump = loadAnimation("mini walk/2.png")
 }
 
 function setup() {
@@ -77,8 +80,9 @@ function setup() {
   
   mario.addAni("standing", stand);
   mario.addAni("jumping", jump);
-  mario.addAni("shrink", littlem);
-  mario.addAni("shrink jump", tinyj);
+  mario.addAni("shrink", ministand);
+  mario.addAni("mini walk", miniwalk);
+  mario.addAni("shrink jump", minijump);
   mario.x = 50;
   mario.y = height/3;
   mario.height = 65;
@@ -259,7 +263,8 @@ function mario_move(){
     mario.h = 65;
   }
   else {
-    mario.ani = "shrink";
+    mario.ani = "mini walk";
+    mario.ani.scale = 0.1
     mario.h = 38;
   }
   if (kb.pressed("up")) {
@@ -302,7 +307,7 @@ function mario_move(){
     else {
       mario.ani = "shrink";
       mario.h = 40;
-      mario.ani.scale = 0.08;
+      mario.ani.scale = 0.1;
     }
   }
 }
